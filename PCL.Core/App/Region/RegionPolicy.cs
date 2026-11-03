@@ -31,6 +31,13 @@ public static partial class RegionPolicy
         "PRC"
     };
 
+    /// <summary>
+    ///     地区功能限制总开关。
+    ///     置为 <see langword="false" /> 时，下载、安装、修复与整合包相关功能不再按地区禁用。
+    ///     如需恢复原有行为，改回 <see langword="true" /> 即可。
+    /// </summary>
+    private const bool RegionRestrictionEnabled = false;
+
     public static RegionAssessment Evaluate(RegionSignals signals)
     {
         ArgumentNullException.ThrowIfNull(signals);
@@ -43,7 +50,7 @@ public static partial class RegionPolicy
                             ChinaTimeZones.Contains(signals.TimeZoneId);
         var chinaRegion = signals.GeoNameAvailable && IsChinaGeoName(signals.GeoName);
 
-        if (chinaTimeZone && chinaRegion)
+        if (RegionRestrictionEnabled && chinaTimeZone && chinaRegion)
             return new RegionAssessment(RegionClassification.Mainland, "china-time-zone-and-region");
 
         if (!signals.TimeZoneAvailable || !signals.GeoNameAvailable)
